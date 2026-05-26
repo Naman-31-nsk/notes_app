@@ -21,7 +21,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<String> notes = [];
+  List<String> notes = [
+    "learned about cards ",
+    "learnt about container",
+    "learnt about container decoration",
+    "Learnt about blur effect",
+  ];
 
   TextEditingController noteController = TextEditingController();
 
@@ -88,8 +93,28 @@ class _HomeScreenState extends State<HomeScreen> {
               itemCount: notes.length,
 
               itemBuilder: (context, index) {
-                return Card(
-                  margin: EdgeInsets.all(10),
+                return Container(
+                  width: double.infinity, // takes the size according to screen
+
+                  height: 80,
+
+                  margin: EdgeInsets.all(8),
+
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 196, 190, 15),
+
+                    borderRadius: BorderRadius.circular(10),
+
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+
+                        blurRadius: 5,
+
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
 
                   child: ListTile(
                     title: Text(notes[index]),
