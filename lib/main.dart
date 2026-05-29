@@ -7,11 +7,7 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: "Notes App",
-      home: HomeScreen(),
-    );
+    return MaterialApp(title: "Notes App", home: HomeScreen());
   }
 }
 
@@ -20,16 +16,27 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+class SecondScreen extends StatelessWidget {
+  final String note;
+  SecondScreen({required this.note});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Note Details")),
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(20),
+
+          child: Text(note, style: TextStyle(fontSize: 25)),
+        ),
+      ),
+    );
+  }
+}
+
 class _HomeScreenState extends State<HomeScreen> {
-  List<String> notes = [
-    "learned about cards ",
-    "learnt about container",
-    "learnt about container decoration",
-    "Learnt about blur effect",
-  ];
-
+  List<String> notes = [];
   TextEditingController noteController = TextEditingController();
-
   void addNote() {
     if (noteController.text.isNotEmpty) {
       setState(() {
@@ -57,7 +64,6 @@ class _HomeScreenState extends State<HomeScreen> {
             controller: noteController,
             decoration: InputDecoration(hintText: "Enter your note"),
           ),
-
           actions: [
             TextButton(
               onPressed: () {
@@ -65,7 +71,6 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               child: Text("Cancel"),
             ),
-
             ElevatedButton(
               onPressed: () {
                 addNote();
@@ -85,51 +90,67 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(title: Text("My Notes"), centerTitle: true),
 
-      body: notes.isEmpty
-          ? Center(
-              child: Text("No Notes Added", style: TextStyle(fontSize: 18)),
-            )
-          : ListView.builder(
-              itemCount: notes.length,
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/copy.png"),
 
-              itemBuilder: (context, index) {
-                return Container(
-                  width: double.infinity, // takes the size according to screen
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: notes.isEmpty
+            ? Center(
+                child: Text(
+                  "No Notes Added",
 
-                  height: 80,
-
-                  margin: EdgeInsets.all(8),
-
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 196, 190, 15),
-
-                    borderRadius: BorderRadius.circular(10),
-
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey,
-
-                        blurRadius: 5,
-
-                        spreadRadius: 2,
-                      ),
-                    ],
+                  style: TextStyle(
+                    fontSize: 22,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
+                ),
+              )
+            : ListView.builder(
+                itemCount: notes.length,
 
-                  child: ListTile(
-                    title: Text(notes[index]),
+                itemBuilder: (context, index) {
+                  return Card(
+                    color: Colors.blueGrey,
 
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete, color: Colors.red),
+                    margin: EdgeInsets.all(10),
 
-                      onPressed: () {
-                        deleteNote(index);
+                    child: ListTile(
+                      title: Text(notes[index]),
+
+                      onTap: () async {
+                        final updatedNote = await Navigator.push(
+                          context,
+
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                SecondScreen(note: notes[index]),
+                          ),
+                        );
+
+                        if (updatedNote != null) {
+                          setState(() {
+                            notes[index] = updatedNote;
+                          });
+                        }
                       },
+
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red),
+
+                        onPressed: () {
+                          deleteNote(index);
+                        },
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
+                  );
+                },
+              ),
+      ),
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
